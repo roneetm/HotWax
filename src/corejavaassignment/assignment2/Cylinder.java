@@ -1,12 +1,11 @@
-package CoreJavaAssignment.Assignment2;
+package corejavaassignment.assignment2;
 
-public class Square {
+public class Cylinder {
 
-
-    public double area(double length) {
+    public double area(double radius, double height) {
 
         try {
-            return Math.pow(length, 2);
+            return Math.PI * Math.pow(radius, 2);
         }
         catch (ArithmeticException arithmeticException){
             arithmeticException.printStackTrace();
@@ -14,15 +13,14 @@ public class Square {
         }
     }
 
-    public double perimeter(double length) {
+    public double volume(double radius, double height) {
 
         try {
-            return 4 * length;
+            return Math.PI * Math.pow(radius, 2) * height;
         }
         catch (ArithmeticException arithmeticException){
             arithmeticException.printStackTrace();
             return 0.0;
         }
-
     }
 }

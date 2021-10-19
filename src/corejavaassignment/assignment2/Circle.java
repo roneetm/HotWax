@@ -1,4 +1,4 @@
-package CoreJavaAssignment.Assignment2;
+package corejavaassignment.assignment2;
 
 public class Circle{
 

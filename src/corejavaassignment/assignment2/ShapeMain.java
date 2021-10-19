@@ -1,4 +1,4 @@
-package CoreJavaAssignment.Assignment2;
+package corejavaassignment.assignment2;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

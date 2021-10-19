@@ -1,6 +1,4 @@
-package CoreJavaAssignment.Assignment2;
-
-import java.util.Scanner;
+package corejavaassignment.assignment2;
 
 public class Sphere {
 
