@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class Sphere {
 
     public double area(double radius) {
-
         try {
             return 4 * Math.PI * ( Math.pow(radius, 2));
         }
