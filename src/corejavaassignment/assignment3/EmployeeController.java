@@ -83,7 +83,7 @@ public class EmployeeController {
                     System.exit(0);
                     break;
                 case 5:
-
+                    // Displaying all the Employee Records
                     listIterator = list.listIterator();
                     while(listIterator.hasNext()){
                         System.out.println(listIterator.next());
