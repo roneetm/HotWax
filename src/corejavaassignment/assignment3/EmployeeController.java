@@ -1,24 +1,13 @@
 package corejavaassignment.assignment3;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.ListIterator;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class EmployeeController {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException {
 
         File file = new File("src/corejavaassignment/assignment3/Employee.txt");
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Employee> list = new ArrayList<>();
-        ObjectOutputStream objectOutputStream = null;
-        ObjectInputStream objectInputStream = null;
-        ListIterator listIterator = null;
-
-                objectInputStream = new ObjectInputStream(new FileInputStream(file));
-                list = (ArrayList<Employee>) objectInputStream.readObject();
-                objectInputStream.close();
 
         while (true){
             System.out.println("#### Please Enter Your Choice ####");
@@ -45,51 +34,68 @@ public class EmployeeController {
                     System.out.print("Enter the DOB of the Employee in DD/MM/YYYY format: ");
                     String dateOfBirth = scanner.next();
 
-                    list.add((new Employee(id, name, email, age, dateOfBirth)));
-                    objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
-                    objectOutputStream.writeObject(list);
-                    objectOutputStream.close();
+                    try(FileWriter fileWriter = new FileWriter(file, true);
+                        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+                        bufferedWriter.write("Id: "+ id + " Name: "+ name + " Email: "+ email + " Age: "+ age + " Date of Birth: "+ dateOfBirth + "\n");
+
+                    } catch (IOException e){
+                        System.out.println("Unable to Read File");
+                    }
 
                     break;
 
                 case 2: // Implementing Delete Operation
                     System.out.print("Please enter the Employee ID ");
                     Long deleteId = scanner.nextLong();
+                    File tempFile = new File("temp.txt");
+                    try (FileWriter fileWriter = new FileWriter(tempFile);
+                         BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                         FileReader fileReader = new FileReader(file);
+                         BufferedReader bufferedReader = new BufferedReader(fileReader)){
 
-                    listIterator = list.listIterator();
-                    while(listIterator.hasNext()){
-                        Employee e = (Employee) listIterator.next();
-                        if(Objects.equals(e.getId(), deleteId)){
-                            list.remove(e);
-                            System.out.println("Deleted Successfully");
+                        String line;
+                        while( (line = bufferedReader.readLine()) != null ){
+                            if(line.contains(String.valueOf(deleteId))){
+                                continue;
+                            }
+                            else {
+                                bufferedWriter.write(line);
+                            }
                         }
-                        else {
-                            System.out.println("Employee Doesn't Exist!");
-                        }
+                        file.delete();
+                        tempFile.renameTo(file);
+
+                    }catch (IOException e){
+                        e.getMessage();
                     }
                     break;
 
                 case 3: // Implementing Search Operation
                     System.out.print("Please enter the Employee ID ");
-                    //String searchName = scanner.next();
                     Long searchId = scanner.nextLong();
 
-                    listIterator = list.listIterator();
-                    while(listIterator.hasNext()){
-                        Employee e = (Employee) listIterator.next();
-                        if(e.getId() == searchId){
-                            System.out.println(e.toString());
+                    try (FileReader fileReader = new FileReader(file);
+                         BufferedReader bufferedReader = new BufferedReader(fileReader)){
+
+                        String line;
+                        while( (line = bufferedReader.readLine()) != null ){
+
+                            if(line.contains(String.valueOf(searchId))){
+                                System.out.println(line);
+                            }
                         }
-                        System.out.println("Record Not Available");
                     }
                     break;
 
                 case 4:
-                    // Displaying all the Employee Records
-                    listIterator = list.listIterator();
-                    while(listIterator.hasNext()){
-                        System.out.println(listIterator.next());
-                    }
+                    try (FileReader fileReader = new FileReader(file);
+                         BufferedReader bufferedReader = new BufferedReader(fileReader)){
+
+                        String line;
+                        while( (line = bufferedReader.readLine()) != null ){
+                               System.out.println(line);
+                            }
+                        }
                     break;
 
                 case 5:
