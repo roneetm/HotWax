@@ -1,5 +1,7 @@
 package corejavaassignment.assignment1;
 
+import org.jsoup.Jsoup;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -50,6 +52,10 @@ public class MainClass {
         while( (line = bufferedReader.readLine()) != null){
             content = content  + line;
         }
+        //content = content.replaceAll("\\<.*?\\>", "" );
+
+        //Parsing HTML to text using Jsoup dependency.
+        content = Jsoup.parse(content).body().text();
         return content;
     }
     public static void readURL(){
@@ -65,9 +71,6 @@ public class MainClass {
                 String webpageContent = getUrlContent(url);
                 System.out.println(webpageContent);
             }
-
-
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException ioException) {
