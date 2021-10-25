@@ -12,24 +12,22 @@ import java.util.TreeMap;
 
 public class MainClass {
 
-    public static void readWords(){
+    public static void readWords() {
         File file = new File("src/corejavaassignment/assignment1/Words.txt");
         HashMap<String, Integer> map = new HashMap<>();
         try (FileReader fileReader = new FileReader(file);
              BufferedReader bufferedReader = new BufferedReader(fileReader);) {
             String line;
-            while((line = bufferedReader.readLine()) != null){
+            while ((line = bufferedReader.readLine()) != null) {
 
-                if(map.containsKey(line)) {
-                    map.put(line, map.get(line)+1);
-                }
-                else {
+                if (map.containsKey(line)) {
+                    map.put(line, map.get(line) + 1);
+                } else {
                     map.put(line, 1);
                 }
                 //System.out.println(line);
             }
-        }
-        catch (IOException ioException){
+        } catch (IOException ioException) {
             ioException.printStackTrace();
         }
 
@@ -42,15 +40,15 @@ public class MainClass {
 
     public static String getUrlContent(String url) throws IOException {
 
-        String content ="";
+        String content = "";
 
         URL url1 = new URL(url);
         URLConnection urlConnection = url1.openConnection();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
         String line;
-        while( (line = bufferedReader.readLine()) != null){
-            content = content  + line;
+        while ((line = bufferedReader.readLine()) != null) {
+            content = content + line;
         }
         //content = content.replaceAll("\\<.*?\\>", "" );
 
@@ -58,7 +56,8 @@ public class MainClass {
         content = Jsoup.parse(content).body().text();
         return content;
     }
-    public static void readURL(){
+
+    public static void readURL() {
 
         File file = new File("src/corejavaassignment/assignment1/url.text");
 
@@ -66,7 +65,7 @@ public class MainClass {
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 
             String line;
-            while ((line = bufferedReader.readLine()) != null){
+            while ((line = bufferedReader.readLine()) != null) {
                 String url = line;
                 String webpageContent = getUrlContent(url);
                 System.out.println(webpageContent);
