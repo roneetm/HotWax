@@ -8,6 +8,7 @@ select * from orders order by CNUM desc;
 --5) Find which salespeople currently have orders in the order table.
 select distinct(SNAME) from salespeople, orders where salespeople.SNUM = orders.SNUM;
 --6) List names of all customers matched with the salespeople serving them.
+select SNAME, CNAME from customers natural join salespeople where customers.SNUM = salespeople.SNUM;
 --7) Find the names and numbers of all salespeople who have more than one customer.
 select SNAME, COMM from salespeople where COMM > 2;
 --8) Count the orders of each of the salespeople and output the results in descending order.
@@ -27,12 +28,15 @@ select cname from customers, orders where customers.cnum = orders.cnum AND ODATE
 --16) Select all orders that had amounts that were greater than at least one of the orders from October 6.
 select * from orders where AMT > (select min(AMT) from Orders where ODATE = '1990-04-10');
 --17) Write a query that uses the EXISTS operator to extract all salespeople who have customers with a rating of 300.
+select SNAME from salespeople where exists (Select rating from customers where rating = 300);
 --18) Find all customers whose cnum is 1000 above the snum of Serres.
+select * from customers where CNUM > (Select snum+1000 from salespeople where sname = 'Serres');
 --19) Give the salespeople’s commissions as percentages instead of decimal numbers.
-select sname, comm, comm*100 as percentage from salespeople ;
+select sname, comm, comm*100 as percentage from salespeople;
 --20) Find the largest order taken by each salesperson on each date, eliminating those Maximum orders, which are less than 3000.
+SELECT MAX(AMT), ODATE FROM roneet.orders natural join salespeople where AMT > 3000 group by ODATE;
 --21) List all the largest orders for October 3, for each salesperson.
-select MAX(AMT) from orders, salespeople where orders.snum = salespeople.snum and orders.ODATE = '1990-03-10';
+select MAX(AMT) from orders natural join salespeople where orders.ODATE = '1990-03-10';
 --22) Find all customers located in cities where Serres has customers.
 select customers.CNAME, customers.CITY, salespeople.SNAME from customers, orders, salespeople where customers.CNUM = orders.CNUM and salespeople.SNUM = 1002 and orders.SNUM=1002;
 --23) Select all customers with a rating above 200.
@@ -41,13 +45,17 @@ select * from CUSTOMERS where RATING > 200;
 SELECT COUNT(Distinct(orders.SNUM)) as totalCount FROM salespeople, orders where salespeople.snum = orders.snum;
 --25) Write a query that produces all customers serviced by salespeople with a commission above 12%. Output the customer’s name, salesperson’s name and the salesperson’s rate of commission.
 --26) Find salespeople who have multiple customers.
+SELECT count(*) FROM roneet.salespeople natural join customers having COUNT(customers.SNUM) > 1;
 --27) Find salespeople with customers located in their own cities.
 SELECT salespeople.SNUM, salespeople.SNAME, salespeople.CITY, customers.CNUM, customers.CNAME, customers.CITY FROM salespeople, customers where salespeople.city = customers.city;
 --28) Find all salespeople whose name starts with ‘P’ and fourth character is ‘I’.
 select * from salespeople where SNAME like 'P__l';
 --29) Write a query that uses a subquery to obtain all orders for the customer named ‘Cisneros’. Assume you do not know his customer number.
+select odate, customers.CNAME from orders, customers where customers.CNUM = orders.CNUM AND CNAME= 'Cisneros';
 --30) Find the largest orders for Serres and Rifkin.
+SELECT MAX(AMT), salespeople.SNAME FROM roneet.orders natural join salespeople WHERE SNAME in ('Rifkin', 'Serres') group by sname;
 --31) Sort the salespeople table in the following order: snum, sname, commission, city.
+select snum, sname, comm, city from salespeople;
 --32) Select all customers whose names fall in between ‘A’ and ‘G’ alphabetical range.
 select * from customers WHERE cname >= 'A' AND cname <='H';
 --33) Select all the possible combinations of customers you can assign.
@@ -58,10 +66,13 @@ select * from orders where AMT IN (select AMT from orders where odate = '1990-04
 select SUM(AMT) as AMT, ODATE from orders group by ODATE order by AMT desc;
 --37) Write a select command that produces the rating followed by the name of each customer in SanJose.
 --38) Find all orders with amounts smaller than any amount for a customer in SanJose.
+select snum, sname, comm, city from salespeople;
 --39) Find all orders with above average amounts for their customers.
+select * from orders natural join customers where AMT > (select AVG(AMT) from orders);
 --40) Write a query that selects the highest rating in each city.
 select MAX(RATING), city from customers group by city;
 --41) Write a query that calculates the amount of the salesperson’s commission on each order by a customer with a rating above 100.00.
+select sname, COMM, rating, ODATE, cname from salespeople natural join customers, orders where rating > 100 GROUP by ODATE;
 --42) Count the customers with ratings above SanJose’s average.
 select * from customers where RATING > (select AVG(RATING) from customers where city = 'San Jose');
 --43) Find all salespeople that are located in either Barcelona or London.
@@ -79,7 +90,7 @@ select * from orders where ODATE = '1990-03-10';
 --50) Find only those customers whose ratings are higher than every customer in Rome.
 select * from customers where Rating > (select RATING from customers where CITY = 'Rome');
 --51) Write a query on the Customers table whose output will exclude all customers with a rating<= 100.00, unless they are located in Rome.
-
+select * from customers where (rating<=100 AND city='Rome') or rating>100;
 --52) Find all rows from the customer’s table for which the salesperson number is 1001.
 select * from customers natural join salespeople where salespeople.SNUM = 1001;
 --53) Find the total amount in orders for each salesperson where their total of amounts are greater than the amount of the largest order in the table.
@@ -95,6 +106,7 @@ select CNAME, RATING from customers natural join orders where AMT > (select AVG(
 select SUM(AMT) from orders;
 --61) Write a SELECT command that produces the order number, amount, and the date from rows in the order table.
 --62) Count the number of non NULL rating fields in the Customers table (including repeats).
+select COUNT(RATING) from customers where rating != NULL;
 --63) Write a query that gives the names of both the salesperson and the customer for each order after the order number.
 --64) List the commissions of all salespeople servicing customers in London.
 select * from salespeople natural join customers where customers.CITY = 'London';
@@ -103,6 +115,7 @@ select * from salespeople natural join customers where customers.CITY = 'London'
 --67) Write a query that selects all customers serviced by Peel or Motika. (Hint: The snum field relates the 2 tables to one another.)
 --68) Count the number of salespeople registering orders for each day. (If a salesperson has more than one order on a given day, he or she should be counted only once.)
 --69) Find all orders attributed to salespeople who live in London.
+select * from orders natural join salespeople where city = 'London';
 --70) Find all orders by customers not located in the same cities as their salespeople.
 --71) Find all salespeople who have customers with more than one current order.
 --72) Write a query that extracts from the customer’s table every customer assigned to a salesperson, who is currently having at least one another customer(besides the customer being selected) with orders in the Orders Table.
@@ -110,6 +123,7 @@ select * from salespeople natural join customers where customers.CITY = 'London'
 SELECT max(rating), city FROM roneet.customers group by city;
 --74) Write a query that will produce the snum values of all salespeople with orders, having amt greater than 1000 in the Orders Table(without repeats).
 --75) Write a query that lists customers in a descending order of rating. Output the rating field first, followed by the customer’s names and numbers.
+select rating, cname, cnum from customers order by rating desc;
 --76) Find the average commission for salespeople in London.
 SELECT AVG(COMM) FROM roneet.salespeople;
 --77) Find all orders credited to the same salesperson who services Hoffman.(cnum 2001).
@@ -118,6 +132,7 @@ SELECT * FROM roneet.salespeople where COMM between 10 AND 12;
 --79) Write a query that will give you the names and cities of all salespeople in London with a commission above 0.10.
 --80) Write a query that selects each customer’s smallest order.
 --81) Write a query that selects the first customer in alphabetical order whose name begins with ‘G’.
+select cname from customers where cname like 'G%' order by cname;
 --82) Write a query that counts the number of different non NULL city values in the customers table.
 --83) Find the average amount from the Orders Table.
 SELECT AVG(AMT) FROM roneet.orders;
