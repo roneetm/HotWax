@@ -138,8 +138,10 @@ select cname from customers where cname like 'G%' order by cname;
 SELECT AVG(AMT) FROM roneet.orders;
 --84) Find all customers who are not located in SanJose and whose rating is above 200
 SELECT * FROM customers Where NOT  City = 'San Jose' AND rating > 200;
---85) Give a simpler way to write this query.SELECT snum, sname, city, comm FROM salespeople WHERE (comm > + 0.12 OR comm < 0.14);
+--85) Give a simpler way to write this query. SELECT snum, sname, city, comm FROM salespeople WHERE (comm > + 0.12 OR comm < 0.14);
+select * from salespeople where (comm>12 or comm<14);
 --86) Which salespersons attend to customers not in the city they have been assigned to?
+select sname, salespeople.city, cname, customers.city as cus_city from salespeople, customers where salespeople.snum=customers.snum and salespeople.city!=customers.city;
 --87) Which salespeople get commission greater than 0.11 are serving customers rated less than 250?
 select * from salespeople, customers where salespeople.SNUM = customers.SNUM And salespeople.COMM > 10 AND customers.RATING < 250;
 --88) Which salespeople have been assigned to the same city but get different commission percentages?
@@ -151,6 +153,7 @@ select * from customers order by RATING desc;
 --92) On which days has Hoffman placed orders?
 select ODATE from orders, customers where customers.CNUM = orders.CNUM AND customers.CNAME = 'Hoffman';
 --93) Which salesmen have no orders between 10/03/1990 and 10/05/1990?
+select sname, odate from customers,salespeople,orders where customers.snum=salespeople.snum and customers.cnum=orders.cnum and odate not between '1996-03-10' and '1996-05-10';
 --94) How many salespersons have succeeded in getting orders?
 select count(distinct(salespeople.snum)) from salespeople natural join orders;
 --95) How many customers have placed orders?
@@ -159,6 +162,7 @@ select count(distinct(CNUM)) from orders;
 select ODATE from orders where AMT = (select MAX(AMT) from orders);
 --97) Who is the most successful salesperson?
 --98) Which customers have the same rating?
+select * from customers order by rating;
 --99) Find all orders greater than the average for October 4th.
 SELECT * FROM roneet.orders where AMT > (select AVG(AMT) from orders where ODATE = '1990-04-10');
 --100) List all customers with ratings above Grass’s average.
@@ -167,7 +171,9 @@ select * from customers where rating >= (select rating from customers where cnam
 select * from customers natural join orders where AMT > (select AVG(AMT) from orders);
 --102) Select the total amount in orders for each salesperson for which the total is greater than the amount of the largest order in the table. 103) Give names and numbers of all salespersons that have more than one customer?
 --104) Select all salespeople by name and number who have customers in their city whom they don’t service.
+select sname, salespeople.city, cname, customers.city from salespeople, customers where customers.snum=salespeople.snum and customers.city!=salespeople.city;
 --105) Does the total amount in orders by customer in Rome and London, exceed the commission paid to salesperson in London, and New York by more than 5 times?
 --106) Which are the date, order number, amt and city for each salesperson (by name) for the maximum order he has obtained?
+select odate, onum, amt, city from orders, salespeople where amt=(select max(amt)from orders);
 --107) Which salesperson is having lowest commission?
 select * from salespeople where COMM = (select MIN(COMM) from salespeople);
